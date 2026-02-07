@@ -46,7 +46,8 @@ func (s *SendQuoteService) SendQuote(ctx context.Context, quote *entities.Quote)
 
 // FormatQuote создает красиво отформатированное сообщение с цитатой (публичная функция для тестирования)
 func (s *SendQuoteService) FormatQuote(quote *entities.Quote) string {
-	rand.Seed(time.Now().UnixNano())
+	// rand.Seed(time.Now().UnixNano())
+	rand.NewSource(time.Now().UnixNano())
 	// Ограничиваем длину цитаты для лучшего отображения
 	text := quote.Text
 	if len(text) > 200 {
