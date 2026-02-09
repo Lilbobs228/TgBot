@@ -1,13 +1,8 @@
 package entities
 
-// Quote представляет цитату с текстом и автором.
-type Quote struct {
-	Text   string // Текст цитаты
-	Author string // Автор цитаты
-}
-
+// Word представляет слово с определением и переводом
 type Word struct {
-	Word        string
-	Definition  string
-	Translation string
+	Word        string // Слово на английском
+	Definition  string // Определение на английском
+	Translation string // Перевод на русский
 }

@@ -43,7 +43,8 @@ func main() {
 	}
 
 	// Инициализация адаптеров
-	quoteAPI := adapters.NewForismaticAPI()
+	// quoteAPI := adapters.NewForismaticAPI()
+	wordAPI := adapters.NewDictionaryAPI()
 	telegramAdapter, err := adapters.NewTelegramAdapter(cfg.BotToken, cfg.ChatID)
 	if err != nil {
 		logger.Error("Не удалось инициализировать TelegramAdapter", "error", err)
@@ -51,29 +52,31 @@ func main() {
 	}
 
 	// Инициализация сервисов
-	fetchQuoteService := usecases.NewFetchQuoteService(quoteAPI)
-	sendQuoteService := usecases.NewSendQuoteService(telegramAdapter)
+	// fetchQuoteService := usecases.NewFetchQuoteService(quoteAPI)
+	// sendQuoteService := usecases.NewSendQuoteService(telegramAdapter)
+	fetchWordService := usecases.NewFetchWordService(wordAPI)
+	sendWordService := usecases.NewSendWordService(telegramAdapter)
 
 	// Планировщик Cron
 	c := cron.New()
 	defer c.Stop()
 
-	// Задача отправки цитат
+	// Задача отправки слов
 	_, err = c.AddFunc("0 4,8,14,18 * * *", func() {
 		taskCtx := context.Background()
 
-		// Получение цитаты на русском языке
-		quote, err := fetchQuoteService.FetchQuote(taskCtx)
+		// Получение слова
+		word, err := fetchWordService.FetchWord(taskCtx)
 		if err != nil {
-			logger.Error("Ошибка получения цитаты", "error", err)
+			logger.Error("Ошибка получения слова", "error", err)
 			return
 		}
 
-		// Отправка цитаты
-		if err := sendQuoteService.SendQuote(taskCtx, quote); err != nil {
-			logger.Error("Ошибка отправки цитаты", "error", err)
+		// Отправка слова
+		if err := sendWordService.SendWord(taskCtx, word); err != nil {
+			logger.Error("Ошибка отправки слова", "error", err)
 		} else {
-			logger.Info("Цитата успешно отправлена", "quote", quote.Text, "author", quote.Author)
+			logger.Info("Слово успешно отправлено", "word", word.Word, "definition", word.Definition)
 		}
 	})
 	if err != nil {
@@ -85,25 +88,25 @@ func main() {
 	c.Start()
 	logger.Info("Планировщик запущен. Ожидание задач.")
 
-	// Отправка тестовой цитаты при запуске (если включено в конфигурации)
+	// Отправка тестового слова при запуске (если включено в конфигурации)
 	if cfg.SendTestQuote {
-		logger.Info("Отправка тестовой цитаты...")
+		logger.Info("Отправка тестового слова...")
 		testCtx := context.Background()
 
-		// Получение тестовой цитаты
-		testQuote, err := fetchQuoteService.FetchQuote(testCtx)
+		// Получение тестового слова
+		testWord, err := fetchWordService.FetchWord(testCtx)
 		if err != nil {
-			logger.Error("Ошибка получения тестовой цитаты", "error", err)
+			logger.Error("Ошибка получения тестового слова", "error", err)
 		} else {
-			// Отправка тестовой цитаты
-			if err := sendQuoteService.SendQuote(testCtx, testQuote); err != nil {
-				logger.Error("Ошибка отправки тестовой цитаты", "error", err)
+			// Отправка тестового слова
+			if err := sendWordService.SendWord(testCtx, testWord); err != nil {
+				logger.Error("Ошибка отправки тестового слова", "error", err)
 			} else {
-				logger.Info("Тестовая цитата успешно отправлена", "quote", testQuote.Text, "author", testQuote.Author)
+				logger.Info("Тестовое слово успешно отправлено", "word", testWord.Word, "definition", testWord.Definition)
 			}
 		}
 	} else {
-		logger.Info("Отправка тестовой цитаты отключена в конфигурации")
+		logger.Info("Отправка тестового слова отключена в конфигурации")
 	}
 
 	// Ожидание сигнала завершения

@@ -5,10 +5,7 @@ import (
 	"telegram-quotes-bot/internal/entities"
 )
 
-// QuoteAPI определяет методы для работы с API цитат.
-type QuoteAPI interface {
-	GetRandomQuote(ctx context.Context) (*entities.Quote, error)
-}
+// WordAPI определяет методы для работы с API слов
 type WordAPI interface {
 	GetRandomWord(ctx context.Context) (*entities.Word, error)
 }

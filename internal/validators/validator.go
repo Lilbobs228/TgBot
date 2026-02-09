@@ -5,33 +5,45 @@ import (
 	"strings"
 )
 
-// ValidateQuote проверяет валидность цитаты
-func ValidateQuote(text, author string) error {
-	if strings.TrimSpace(text) == "" {
-		return errors.New("текст цитаты не может быть пустым")
+// ValidateWord проверяет валидность слова
+func ValidateWord(word, definition, translation string) error {
+	if strings.TrimSpace(word) == "" {
+		return errors.New("слово не может быть пустым")
 	}
 
-	if strings.TrimSpace(author) == "" {
-		return errors.New("автор цитаты не может быть пустым")
+	if strings.TrimSpace(definition) == "" {
+		return errors.New("определение не может быть пустым")
 	}
 
-	// Проверяем длину текста
-	if len(text) > 1000 {
-		return errors.New("текст цитаты слишком длинный (максимум 1000 символов)")
+	if strings.TrimSpace(translation) == "" {
+		return errors.New("перевод не может быть пустым")
 	}
 
-	// Проверяем длину автора
-	if len(author) > 100 {
-		return errors.New("имя автора слишком длинное (максимум 100 символов)")
+	// Проверяем длину слова (3-50 символов)
+	if len(word) < 3 || len(word) > 50 {
+		return errors.New("слово должно быть от 3 до 50 символов")
 	}
 
-	// Проверяем на потенциально опасные символы
-	if containsDangerousChars(text) {
-		return errors.New("текст цитаты содержит недопустимые символы")
+	// Проверяем длину определения
+	if len(definition) > 500 {
+		return errors.New("определение слишком длинное (максимум 500 символов)")
 	}
 
-	if containsDangerousChars(author) {
-		return errors.New("имя автора содержит недопустимые символы")
+	// Проверяем длину перевода
+	if len(translation) > 500 {
+		return errors.New("перевод слишком длинный (максимум 500 символов)")
+	}
+
+	if containsDangerousChars(word) {
+		return errors.New("слово содержит недопустимые символы")
+	}
+
+	if containsDangerousChars(definition) {
+		return errors.New("определение содержит недопустимые символы")
+	}
+
+	if containsDangerousChars(translation) {
+		return errors.New("перевод содержит недопустимые символы")
 	}
 
 	return nil
