@@ -5,3 +5,9 @@ type Quote struct {
 	Text   string // Текст цитаты
 	Author string // Автор цитаты
 }
+
+type Word struct {
+	Word        string
+	Definition  string
+	Translation string
+}
