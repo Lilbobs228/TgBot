@@ -9,6 +9,9 @@ import (
 type QuoteAPI interface {
 	GetRandomQuote(ctx context.Context) (*entities.Quote, error)
 }
+type WordAPI interface {
+	GetRandomWord(ctx context.Context) (*entities.Word, error)
+}
 
 // TelegramSender определяет методы для отправки сообщений в Telegram.
 type TelegramSender interface {
